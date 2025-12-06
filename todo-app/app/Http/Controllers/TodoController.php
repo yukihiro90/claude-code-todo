@@ -7,9 +7,14 @@ use Illuminate\Http\Request;
 
 class TodoController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-        $todos = Todo::orderBy('created_at', 'desc')->get();
+        $todos = auth()->user()->todos()->orderBy('created_at', 'desc')->get();
         return view('todos.index', compact('todos'));
     }
 
@@ -19,7 +24,7 @@ class TodoController extends Controller
             'title' => 'required|max:255',
         ]);
 
-        Todo::create([
+        auth()->user()->todos()->create([
             'title' => $request->title,
             'completed' => false,
         ]);
@@ -29,6 +34,10 @@ class TodoController extends Controller
 
     public function update(Request $request, Todo $todo)
     {
+        if ($todo->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $todo->update([
             'completed' => !$todo->completed,
         ]);
@@ -38,6 +47,10 @@ class TodoController extends Controller
 
     public function destroy(Todo $todo)
     {
+        if ($todo->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $todo->delete();
 
         return redirect()->route('todos.index')->with('success', 'Todoを削除しました！');

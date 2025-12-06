@@ -156,6 +156,44 @@
             opacity: 0.5;
         }
 
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .user-info {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(200, 35, 51, 0.9);
+            transform: translateY(-2px);
+        }
+
         @media (max-width: 640px) {
             h1 {
                 font-size: 2rem;
@@ -164,12 +202,26 @@
             .card {
                 padding: 20px;
             }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📝 Todoアプリ</h1>
+        <div class="header">
+            <h1>📝 Todoアプリ</h1>
+            <div class="user-info">
+                <span class="user-name">{{ auth()->user()->name }}</span>
+                <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn-logout">ログアウト</button>
+                </form>
+            </div>
+        </div>
 
         <div class="card">
             @if(session('success'))
