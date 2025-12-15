@@ -99,6 +99,47 @@
             background: #c82333;
         }
 
+        input[type="date"] {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            min-width: 150px;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .due-date {
+            font-size: 12px;
+            color: #666;
+            margin-left: 10px;
+        }
+
+        .due-date.overdue {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .due-date.today {
+            color: #fd7e14;
+            font-weight: 600;
+        }
+
+        .due-date.tomorrow {
+            color: #ffc107;
+            font-weight: 600;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
         .todo-list {
             list-style: none;
         }
@@ -240,8 +281,16 @@
                         required
                         autofocus
                     >
+                    <input
+                        type="date"
+                        name="due_date"
+                        min="{{ date('Y-m-d') }}"
+                    >
                     <button type="submit" class="btn btn-primary">追加</button>
                 </div>
+                @error('due_date')
+                    <p class="error-message">{{ $message }}</p>
+                @enderror
             </form>
 
             @if($todos->count() > 0)
@@ -258,6 +307,12 @@
                                 >
                                 <span class="todo-title {{ $todo->completed ? 'completed' : '' }}">
                                     {{ $todo->title }}
+                                    @if($todo->due_date)
+                                        <span class="due-date {{ $todo->due_status }}">
+                                            {{ $todo->due_date->format('Y/m/d') }}
+                                            @if($todo->due_label)（{{ $todo->due_label }}）@endif
+                                        </span>
+                                    @endif
                                 </span>
                             </form>
 

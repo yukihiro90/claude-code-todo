@@ -14,7 +14,10 @@ class TodoController extends Controller
 
     public function index()
     {
-        $todos = auth()->user()->todos()->orderBy('created_at', 'desc')->get();
+        $todos = auth()->user()->todos()
+            ->orderByRaw('due_date IS NULL, due_date ASC')
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('todos.index', compact('todos'));
     }
 
@@ -22,11 +25,13 @@ class TodoController extends Controller
     {
         $request->validate([
             'title' => 'required|max:255',
+            'due_date' => 'nullable|date|after_or_equal:today',
         ]);
 
         auth()->user()->todos()->create([
             'title' => $request->title,
             'completed' => false,
+            'due_date' => $request->due_date,
         ]);
 
         return redirect()->route('todos.index')->with('success', 'Todoが作成されました！');
