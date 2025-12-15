@@ -308,23 +308,9 @@
                                 <span class="todo-title {{ $todo->completed ? 'completed' : '' }}">
                                     {{ $todo->title }}
                                     @if($todo->due_date)
-                                        @php
-                                            $dueDate = $todo->due_date;
-                                            $today = now()->startOfDay();
-                                            $class = '';
-                                            if ($dueDate->lt($today)) {
-                                                $class = 'overdue';
-                                            } elseif ($dueDate->eq($today)) {
-                                                $class = 'today';
-                                            } elseif ($dueDate->eq($today->copy()->addDay())) {
-                                                $class = 'tomorrow';
-                                            }
-                                        @endphp
-                                        <span class="due-date {{ $class }}">
-                                            {{ $dueDate->format('Y/m/d') }}
-                                            @if($class === 'overdue')（期限切れ）@endif
-                                            @if($class === 'today')（今日）@endif
-                                            @if($class === 'tomorrow')（明日）@endif
+                                        <span class="due-date {{ $todo->due_status }}">
+                                            {{ $todo->due_date->format('Y/m/d') }}
+                                            @if($todo->due_label)（{{ $todo->due_label }}）@endif
                                         </span>
                                     @endif
                                 </span>

@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
 
-class TodoDueReminder extends Notification
+class TodoDueReminder extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -46,7 +46,7 @@ class TodoDueReminder extends Notification
             $message->line('・ ' . $todo->title);
         }
 
-        $message->action('Todoを確認する', url('/'))
+        $message->action('Todoを確認する', route('todos.index'))
                 ->line('期限内に完了させましょう！');
 
         return $message;

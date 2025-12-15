@@ -29,15 +29,17 @@ class SendTodoReminders extends Command
     {
         $this->info('リマインダー送信を開始します...');
 
-        // 明日が期限の未完了Todoを持つユーザーを取得
+        // 明日が期限の未完了Todoを持つユーザーを取得（N+1問題を回避）
         $usersWithDueTodos = User::whereHas('todos', function ($query) {
             $query->dueTomorrow();
-        })->get();
+        })->with(['todos' => function ($query) {
+            $query->dueTomorrow();
+        }])->get();
 
         $sentCount = 0;
 
         foreach ($usersWithDueTodos as $user) {
-            $dueTodos = $user->todos()->dueTomorrow()->get();
+            $dueTodos = $user->todos;
 
             if ($dueTodos->isNotEmpty()) {
                 $user->notify(new TodoDueReminder($dueTodos));
